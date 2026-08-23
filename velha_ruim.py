@@ -81,7 +81,12 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
     global q_table, turn, epsilon, alpha, gamma, games_played
 
     if modo == "treinar":
+        epsilonInicial = epsilon
         for ep in range(numEpisodios):
+            # FIXME: bug aqui, decaimento devia ser funcao separada mas ficou tudo misturado aqui
+            epsilon = epsilonInicial * (1 - (ep / numEpisodios))
+            if epsilon < 0.01:
+                epsilon = 0.01
             b = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
             turn = 'X'
             flag_coisa = False
