@@ -379,6 +379,25 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                     else:
                         turn = 'X'
             time.sleep(1)
+    elif modo == "verqtable":
+        carregarQTable(caminhoSalvar)
+        print("total de estados na q_table: " + str(len(q_table)))
+        listaOrdenada = []
+        for chaveEstado in q_table:
+            acoes = q_table[chaveEstado]
+            maiorValor = -999999
+            for a in acoes:
+                if acoes[a] > maiorValor:
+                    maiorValor = acoes[a]
+            listaOrdenada.append((maiorValor, chaveEstado, acoes))
+        listaOrdenada.sort()
+        listaOrdenada.reverse()
+        xx = 0
+        for item in listaOrdenada:
+            if xx >= 10:
+                break
+            print("estado: " + item[1] + " melhor valor: " + str(item[0]) + " acoes: " + str(item[2]))
+            xx = xx + 1
     else:
         raise Exception("erro")
 
@@ -405,10 +424,13 @@ if __name__ == "__main__":
         rodarJogoETreinarTudoDeUmaVez("jogar", 0, caminhoArquivo)
     elif args.modo == "iavsia":
         rodarJogoETreinarTudoDeUmaVez("iavsia", 0, caminhoArquivo)
+    elif args.modo == "verqtable":
+        rodarJogoETreinarTudoDeUmaVez("verqtable", 0, caminhoArquivo)
     else:
         print("1 - treinar")
         print("2 - jogar")
         print("3 - assistir ia vs ia")
+        print("4 - ver q_table")
         op = input("escolha: ")
         if op == "1":
             rodarJogoETreinarTudoDeUmaVez("treinar", int(args.episodios), caminhoArquivo)
@@ -416,5 +438,7 @@ if __name__ == "__main__":
             rodarJogoETreinarTudoDeUmaVez("jogar", 0, caminhoArquivo)
         elif op == "3":
             rodarJogoETreinarTudoDeUmaVez("iavsia", 0, caminhoArquivo)
+        elif op == "4":
+            rodarJogoETreinarTudoDeUmaVez("verqtable", 0, caminhoArquivo)
         else:
             raise Exception("erro")
