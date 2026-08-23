@@ -78,7 +78,7 @@ def carregarPlacar(caminho):
         pass
 
 def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
-    global q_table, turn, epsilon, alpha, gamma, games_played
+    global q_table, turn, epsilon, alpha, gamma, games_played, placar
 
     if modo == "treinar":
         epsilonInicial = epsilon
@@ -218,7 +218,6 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         print("treino concluido, jogos: " + str(games_played))
     elif modo == "jogar":
         import datetime
-        global placar
         carregarQTable(caminhoSalvar)
         carregarPlacar("placar_ruim.txt")
         inicioPartida = str(datetime.datetime.now())
@@ -403,6 +402,26 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                 break
             print("estado: " + item[1] + " melhor valor: " + str(item[0]) + " acoes: " + str(item[2]))
             xx = xx + 1
+    elif modo == "reset":
+        confirmacao = input("tem certeza que quer resetar tudo? (s/n): ")
+        if confirmacao == "s":
+            q_table = {}
+            placar = {"vitorias": 0, "derrotas": 0, "empates": 0}
+            try:
+                os.remove(caminhoSalvar)
+            except:
+                pass
+            try:
+                os.remove("placar_ruim.txt")
+            except:
+                pass
+            try:
+                os.remove("historico_ruim.txt")
+            except:
+                pass
+            print("progresso resetado")
+        else:
+            print("cancelado")
     else:
         raise Exception("erro")
 
@@ -431,11 +450,14 @@ if __name__ == "__main__":
         rodarJogoETreinarTudoDeUmaVez("iavsia", 0, caminhoArquivo)
     elif args.modo == "verqtable":
         rodarJogoETreinarTudoDeUmaVez("verqtable", 0, caminhoArquivo)
+    elif args.modo == "reset":
+        rodarJogoETreinarTudoDeUmaVez("reset", 0, caminhoArquivo)
     else:
         print("1 - treinar")
         print("2 - jogar")
         print("3 - assistir ia vs ia")
         print("4 - ver q_table")
+        print("5 - resetar progresso")
         op = input("escolha: ")
         if op == "1":
             rodarJogoETreinarTudoDeUmaVez("treinar", int(args.episodios), caminhoArquivo)
@@ -445,5 +467,7 @@ if __name__ == "__main__":
             rodarJogoETreinarTudoDeUmaVez("iavsia", 0, caminhoArquivo)
         elif op == "4":
             rodarJogoETreinarTudoDeUmaVez("verqtable", 0, caminhoArquivo)
+        elif op == "5":
+            rodarJogoETreinarTudoDeUmaVez("reset", 0, caminhoArquivo)
         else:
             raise Exception("erro")
