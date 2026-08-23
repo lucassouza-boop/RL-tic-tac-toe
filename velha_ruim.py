@@ -220,6 +220,18 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
             turn = iaSymbol
         else:
             turn = humanSymbol
+        # FIXME: bug aqui, dificuldade devia ser enum e nao string comparada assim
+        dificuldadeEscolhida = input("dificuldade (1=facil, 2=medio, 3=dificil): ")
+        if dificuldadeEscolhida == "1":
+            epsilonJogo = 0.5
+        else:
+            if dificuldadeEscolhida == "2":
+                epsilonJogo = 0.2
+            else:
+                if dificuldadeEscolhida == "3":
+                    epsilonJogo = 0.0
+                else:
+                    epsilonJogo = 0.2
         b = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
         acabou = False
         while acabou == False:
@@ -263,19 +275,23 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                     placar["empates"] = placar["empates"] + 1
                     acabou = True
                 else:
-                    chave = tabuleiroParaChave(b)
-                    if chave in q_table:
-                        melhores = q_table[chave]
-                        melhorValor = -999999
-                        melhorJogada = disp[0]
-                        for a in disp:
-                            v = melhores[a] if a in melhores else 0
-                            if v > melhorValor:
-                                melhorValor = v
-                                melhorJogada = a
-                        jogadaIA = melhorJogada
-                    else:
+                    r3 = random()
+                    if r3 < epsilonJogo:
                         jogadaIA = choice(disp)
+                    else:
+                        chave = tabuleiroParaChave(b)
+                        if chave in q_table:
+                            melhores = q_table[chave]
+                            melhorValor = -999999
+                            melhorJogada = disp[0]
+                            for a in disp:
+                                v = melhores[a] if a in melhores else 0
+                                if v > melhorValor:
+                                    melhorValor = v
+                                    melhorJogada = a
+                            jogadaIA = melhorJogada
+                        else:
+                            jogadaIA = choice(disp)
                     b[jogadaIA] = iaSymbol
                     w2 = False
                     if b[0]==iaSymbol and b[1]==iaSymbol and b[2]==iaSymbol: w2=True
