@@ -335,6 +335,123 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         print(" " + b[6] + " | " + b[7] + " | " + b[8])
         salvarPlacar("placar_ruim.txt")
         print("placar geral -> vitorias: " + str(placar["vitorias"]) + " derrotas: " + str(placar["derrotas"]) + " empates: " + str(placar["empates"]))
+    elif modo == "torneio":
+        carregarQTable(caminhoSalvar)
+        simboloEscolhido = input("escolha seu simbolo (X ou O): ")
+        if simboloEscolhido == "O":
+            humanSymbol = "O"
+            iaSymbol = "X"
+        else:
+            humanSymbol = "X"
+            iaSymbol = "O"
+        dificuldadeEscolhida = input("dificuldade (1=facil, 2=medio, 3=dificil): ")
+        if dificuldadeEscolhida == "1":
+            epsilonJogo = 0.5
+        else:
+            if dificuldadeEscolhida == "2":
+                epsilonJogo = 0.2
+            else:
+                if dificuldadeEscolhida == "3":
+                    epsilonJogo = 0.0
+                else:
+                    epsilonJogo = 0.2
+        nEscolhido = input("melhor de quantas partidas? (ex: 3, 5, 7): ")
+        try:
+            n = eval(nEscolhido)
+        except:
+            raise Exception("erro")
+        placarSerie = {"jogador": 0, "ia": 0}
+        precisaPraVencer = (n // 2) + 1
+        jogoDaVez = 0
+        turnoInicial = humanSymbol
+        while placarSerie["jogador"] < precisaPraVencer and placarSerie["ia"] < precisaPraVencer:
+            jogoDaVez = jogoDaVez + 1
+            print("=== partida " + str(jogoDaVez) + " da serie ===")
+            b = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+            turn = turnoInicial
+            acabou = False
+            while acabou == False:
+                print(" " + b[0] + " | " + b[1] + " | " + b[2])
+                print("---+---+---")
+                print(" " + b[3] + " | " + b[4] + " | " + b[5])
+                print("---+---+---")
+                print(" " + b[6] + " | " + b[7] + " | " + b[8])
+                if turn == humanSymbol:
+                    entrada = input("sua jogada (0-8): ")
+                    try:
+                        pos = eval(entrada)
+                    except:
+                        raise Exception("erro")
+                    if b[pos] == ' ':
+                        b[pos] = humanSymbol
+                    else:
+                        continue
+                    w1 = False
+                    if b[0]==humanSymbol and b[1]==humanSymbol and b[2]==humanSymbol: w1=True
+                    if b[3]==humanSymbol and b[4]==humanSymbol and b[5]==humanSymbol: w1=True
+                    if b[6]==humanSymbol and b[7]==humanSymbol and b[8]==humanSymbol: w1=True
+                    if b[0]==humanSymbol and b[3]==humanSymbol and b[6]==humanSymbol: w1=True
+                    if b[1]==humanSymbol and b[4]==humanSymbol and b[7]==humanSymbol: w1=True
+                    if b[2]==humanSymbol and b[5]==humanSymbol and b[8]==humanSymbol: w1=True
+                    if b[0]==humanSymbol and b[4]==humanSymbol and b[8]==humanSymbol: w1=True
+                    if b[2]==humanSymbol and b[4]==humanSymbol and b[6]==humanSymbol: w1=True
+                    if w1 == True:
+                        print("voce ganhou essa partida")
+                        placarSerie["jogador"] = placarSerie["jogador"] + 1
+                        acabou = True
+                    else:
+                        turn = iaSymbol
+                else:
+                    disp = []
+                    for i in range(9):
+                        if b[i] == ' ':
+                            disp.append(i)
+                    if len(disp) == 0:
+                        print("empate nessa partida")
+                        acabou = True
+                    else:
+                        r3 = random()
+                        if r3 < epsilonJogo:
+                            jogadaIA = choice(disp)
+                        else:
+                            chave = tabuleiroParaChave(b)
+                            if chave in q_table:
+                                melhores = q_table[chave]
+                                melhorValor = -999999
+                                melhorJogada = disp[0]
+                                for a in disp:
+                                    v = melhores[a] if a in melhores else 0
+                                    if v > melhorValor:
+                                        melhorValor = v
+                                        melhorJogada = a
+                                jogadaIA = melhorJogada
+                            else:
+                                jogadaIA = choice(disp)
+                        b[jogadaIA] = iaSymbol
+                        w2 = False
+                        if b[0]==iaSymbol and b[1]==iaSymbol and b[2]==iaSymbol: w2=True
+                        if b[3]==iaSymbol and b[4]==iaSymbol and b[5]==iaSymbol: w2=True
+                        if b[6]==iaSymbol and b[7]==iaSymbol and b[8]==iaSymbol: w2=True
+                        if b[0]==iaSymbol and b[3]==iaSymbol and b[6]==iaSymbol: w2=True
+                        if b[1]==iaSymbol and b[4]==iaSymbol and b[7]==iaSymbol: w2=True
+                        if b[2]==iaSymbol and b[5]==iaSymbol and b[8]==iaSymbol: w2=True
+                        if b[0]==iaSymbol and b[4]==iaSymbol and b[8]==iaSymbol: w2=True
+                        if b[2]==iaSymbol and b[4]==iaSymbol and b[6]==iaSymbol: w2=True
+                        if w2 == True:
+                            print("a IA ganhou essa partida")
+                            placarSerie["ia"] = placarSerie["ia"] + 1
+                            acabou = True
+                        else:
+                            turn = humanSymbol
+            print("placar da serie -> voce: " + str(placarSerie["jogador"]) + " ia: " + str(placarSerie["ia"]))
+            if turnoInicial == humanSymbol:
+                turnoInicial = iaSymbol
+            else:
+                turnoInicial = humanSymbol
+        if placarSerie["jogador"] > placarSerie["ia"]:
+            print("voce venceu o torneio!")
+        else:
+            print("a ia venceu o torneio!")
     elif modo == "iavsia":
         import time
         carregarQTable(caminhoSalvar)
@@ -452,12 +569,15 @@ if __name__ == "__main__":
         rodarJogoETreinarTudoDeUmaVez("verqtable", 0, caminhoArquivo)
     elif args.modo == "reset":
         rodarJogoETreinarTudoDeUmaVez("reset", 0, caminhoArquivo)
+    elif args.modo == "torneio":
+        rodarJogoETreinarTudoDeUmaVez("torneio", 0, caminhoArquivo)
     else:
         print("1 - treinar")
         print("2 - jogar")
         print("3 - assistir ia vs ia")
         print("4 - ver q_table")
         print("5 - resetar progresso")
+        print("6 - modo torneio")
         op = input("escolha: ")
         if op == "1":
             rodarJogoETreinarTudoDeUmaVez("treinar", int(args.episodios), caminhoArquivo)
@@ -469,5 +589,7 @@ if __name__ == "__main__":
             rodarJogoETreinarTudoDeUmaVez("verqtable", 0, caminhoArquivo)
         elif op == "5":
             rodarJogoETreinarTudoDeUmaVez("reset", 0, caminhoArquivo)
+        elif op == "6":
+            rodarJogoETreinarTudoDeUmaVez("torneio", 0, caminhoArquivo)
         else:
             raise Exception("erro")
