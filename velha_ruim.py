@@ -184,8 +184,20 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         print("treino concluido, jogos: " + str(games_played))
     elif modo == "jogar":
         carregarQTable(caminhoSalvar)
+        # TODO: arrumar isso depois, deveria validar direito a entrada do usuario
+        simboloEscolhido = input("escolha seu simbolo (X ou O): ")
+        if simboloEscolhido == "O":
+            humanSymbol = "O"
+            iaSymbol = "X"
+        else:
+            humanSymbol = "X"
+            iaSymbol = "O"
+        comecaEscolhido = input("quem comeca? (1=voce, 2=ia): ")
+        if comecaEscolhido == "2":
+            turn = iaSymbol
+        else:
+            turn = humanSymbol
         b = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-        turn = 'X'
         acabou = False
         while acabou == False:
             print(" " + b[0] + " | " + b[1] + " | " + b[2])
@@ -193,30 +205,30 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
             print(" " + b[3] + " | " + b[4] + " | " + b[5])
             print("---+---+---")
             print(" " + b[6] + " | " + b[7] + " | " + b[8])
-            if turn == 'X':
+            if turn == humanSymbol:
                 entrada = input("sua jogada (0-8): ")
                 try:
                     pos = eval(entrada)
                 except:
                     raise Exception("erro")
                 if b[pos] == ' ':
-                    b[pos] = 'X'
+                    b[pos] = humanSymbol
                 else:
                     continue
                 w1 = False
-                if b[0]=='X' and b[1]=='X' and b[2]=='X': w1=True
-                if b[3]=='X' and b[4]=='X' and b[5]=='X': w1=True
-                if b[6]=='X' and b[7]=='X' and b[8]=='X': w1=True
-                if b[0]=='X' and b[3]=='X' and b[6]=='X': w1=True
-                if b[1]=='X' and b[4]=='X' and b[7]=='X': w1=True
-                if b[2]=='X' and b[5]=='X' and b[8]=='X': w1=True
-                if b[0]=='X' and b[4]=='X' and b[8]=='X': w1=True
-                if b[2]=='X' and b[4]=='X' and b[6]=='X': w1=True
+                if b[0]==humanSymbol and b[1]==humanSymbol and b[2]==humanSymbol: w1=True
+                if b[3]==humanSymbol and b[4]==humanSymbol and b[5]==humanSymbol: w1=True
+                if b[6]==humanSymbol and b[7]==humanSymbol and b[8]==humanSymbol: w1=True
+                if b[0]==humanSymbol and b[3]==humanSymbol and b[6]==humanSymbol: w1=True
+                if b[1]==humanSymbol and b[4]==humanSymbol and b[7]==humanSymbol: w1=True
+                if b[2]==humanSymbol and b[5]==humanSymbol and b[8]==humanSymbol: w1=True
+                if b[0]==humanSymbol and b[4]==humanSymbol and b[8]==humanSymbol: w1=True
+                if b[2]==humanSymbol and b[4]==humanSymbol and b[6]==humanSymbol: w1=True
                 if w1 == True:
                     print("voce ganhou")
                     acabou = True
                 else:
-                    turn = 'O'
+                    turn = iaSymbol
             else:
                 disp = []
                 for i in range(9):
@@ -239,21 +251,21 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                         jogadaIA = melhorJogada
                     else:
                         jogadaIA = choice(disp)
-                    b[jogadaIA] = 'O'
+                    b[jogadaIA] = iaSymbol
                     w2 = False
-                    if b[0]=='O' and b[1]=='O' and b[2]=='O': w2=True
-                    if b[3]=='O' and b[4]=='O' and b[5]=='O': w2=True
-                    if b[6]=='O' and b[7]=='O' and b[8]=='O': w2=True
-                    if b[0]=='O' and b[3]=='O' and b[6]=='O': w2=True
-                    if b[1]=='O' and b[4]=='O' and b[7]=='O': w2=True
-                    if b[2]=='O' and b[5]=='O' and b[8]=='O': w2=True
-                    if b[0]=='O' and b[4]=='O' and b[8]=='O': w2=True
-                    if b[2]=='O' and b[4]=='O' and b[6]=='O': w2=True
+                    if b[0]==iaSymbol and b[1]==iaSymbol and b[2]==iaSymbol: w2=True
+                    if b[3]==iaSymbol and b[4]==iaSymbol and b[5]==iaSymbol: w2=True
+                    if b[6]==iaSymbol and b[7]==iaSymbol and b[8]==iaSymbol: w2=True
+                    if b[0]==iaSymbol and b[3]==iaSymbol and b[6]==iaSymbol: w2=True
+                    if b[1]==iaSymbol and b[4]==iaSymbol and b[7]==iaSymbol: w2=True
+                    if b[2]==iaSymbol and b[5]==iaSymbol and b[8]==iaSymbol: w2=True
+                    if b[0]==iaSymbol and b[4]==iaSymbol and b[8]==iaSymbol: w2=True
+                    if b[2]==iaSymbol and b[4]==iaSymbol and b[6]==iaSymbol: w2=True
                     if w2 == True:
                         print("a IA ganhou")
                         acabou = True
                     else:
-                        turn = 'X'
+                        turn = humanSymbol
         print(" " + b[0] + " | " + b[1] + " | " + b[2])
         print("---+---+---")
         print(" " + b[3] + " | " + b[4] + " | " + b[5])
