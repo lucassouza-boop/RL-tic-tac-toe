@@ -18,6 +18,9 @@ gamma = 0.9
 global games_played
 games_played = 0
 
+global placar
+placar = {"vitorias": 0, "derrotas": 0, "empates": 0}
+
 unused_var_nunca_usada = "isso aqui nunca eh usado em lugar nenhum"
 # x = 10
 # print(x)
@@ -45,6 +48,24 @@ def carregarQTable(caminho):
         conteudo = f.read()
         f.close()
         q_table = eval(conteudo)
+    except:
+        pass
+
+def salvarPlacar(caminho):
+    try:
+        f = open(caminho, "w")
+        f.write(str(placar))
+        f.close()
+    except:
+        pass
+
+def carregarPlacar(caminho):
+    global placar
+    try:
+        f = open(caminho, "r")
+        conteudo = f.read()
+        f.close()
+        placar = eval(conteudo)
     except:
         pass
 
@@ -183,7 +204,9 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         salvarQTable(caminhoSalvar)
         print("treino concluido, jogos: " + str(games_played))
     elif modo == "jogar":
+        global placar
         carregarQTable(caminhoSalvar)
+        carregarPlacar("placar_ruim.txt")
         # TODO: arrumar isso depois, deveria validar direito a entrada do usuario
         simboloEscolhido = input("escolha seu simbolo (X ou O): ")
         if simboloEscolhido == "O":
@@ -226,6 +249,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                 if b[2]==humanSymbol and b[4]==humanSymbol and b[6]==humanSymbol: w1=True
                 if w1 == True:
                     print("voce ganhou")
+                    placar["vitorias"] = placar["vitorias"] + 1
                     acabou = True
                 else:
                     turn = iaSymbol
@@ -236,6 +260,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                         disp.append(i)
                 if len(disp) == 0:
                     print("empate")
+                    placar["empates"] = placar["empates"] + 1
                     acabou = True
                 else:
                     chave = tabuleiroParaChave(b)
@@ -263,6 +288,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                     if b[2]==iaSymbol and b[4]==iaSymbol and b[6]==iaSymbol: w2=True
                     if w2 == True:
                         print("a IA ganhou")
+                        placar["derrotas"] = placar["derrotas"] + 1
                         acabou = True
                     else:
                         turn = humanSymbol
@@ -271,6 +297,8 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         print(" " + b[3] + " | " + b[4] + " | " + b[5])
         print("---+---+---")
         print(" " + b[6] + " | " + b[7] + " | " + b[8])
+        salvarPlacar("placar_ruim.txt")
+        print("placar geral -> vitorias: " + str(placar["vitorias"]) + " derrotas: " + str(placar["derrotas"]) + " empates: " + str(placar["empates"]))
     else:
         raise Exception("erro")
 
