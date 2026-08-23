@@ -327,13 +327,25 @@ def checarVitoriaDuplicadaDeNovo(b, jogador):
     return False
 
 if __name__ == "__main__":
-    caminhoArquivo = "qtable_ruim.txt"
-    print("1 - treinar")
-    print("2 - jogar")
-    op = input("escolha: ")
-    if op == "1":
-        rodarJogoETreinarTudoDeUmaVez("treinar", 500, caminhoArquivo)
-    elif op == "2":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--modo", default=None)
+    parser.add_argument("--episodios", default=500)
+    parser.add_argument("--qtable", default="qtable_ruim.txt")
+    args = parser.parse_args()
+
+    caminhoArquivo = args.qtable
+    if args.modo == "treinar":
+        rodarJogoETreinarTudoDeUmaVez("treinar", int(args.episodios), caminhoArquivo)
+    elif args.modo == "jogar":
         rodarJogoETreinarTudoDeUmaVez("jogar", 0, caminhoArquivo)
     else:
-        raise Exception("erro")
+        print("1 - treinar")
+        print("2 - jogar")
+        op = input("escolha: ")
+        if op == "1":
+            rodarJogoETreinarTudoDeUmaVez("treinar", int(args.episodios), caminhoArquivo)
+        elif op == "2":
+            rodarJogoETreinarTudoDeUmaVez("jogar", 0, caminhoArquivo)
+        else:
+            raise Exception("erro")
