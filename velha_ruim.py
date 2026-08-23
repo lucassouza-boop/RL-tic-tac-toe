@@ -51,6 +51,14 @@ def carregarQTable(caminho):
     except:
         pass
 
+def registrarHistorico(caminho, linha):
+    try:
+        f = open(caminho, "a")
+        f.write(linha + "\n")
+        f.close()
+    except:
+        pass
+
 def salvarPlacar(caminho):
     try:
         f = open(caminho, "w")
@@ -204,9 +212,12 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         salvarQTable(caminhoSalvar)
         print("treino concluido, jogos: " + str(games_played))
     elif modo == "jogar":
+        import datetime
         global placar
         carregarQTable(caminhoSalvar)
         carregarPlacar("placar_ruim.txt")
+        inicioPartida = str(datetime.datetime.now())
+        registrarHistorico("historico_ruim.txt", "=== partida iniciada em " + inicioPartida + " ===")
         # TODO: arrumar isso depois, deveria validar direito a entrada do usuario
         simboloEscolhido = input("escolha seu simbolo (X ou O): ")
         if simboloEscolhido == "O":
@@ -248,6 +259,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                     raise Exception("erro")
                 if b[pos] == ' ':
                     b[pos] = humanSymbol
+                    registrarHistorico("historico_ruim.txt", "jogador " + humanSymbol + " jogou na posicao " + str(pos))
                 else:
                     continue
                 w1 = False
@@ -262,6 +274,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                 if w1 == True:
                     print("voce ganhou")
                     placar["vitorias"] = placar["vitorias"] + 1
+                    registrarHistorico("historico_ruim.txt", "resultado: vitoria do jogador")
                     acabou = True
                 else:
                     turn = iaSymbol
@@ -273,6 +286,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                 if len(disp) == 0:
                     print("empate")
                     placar["empates"] = placar["empates"] + 1
+                    registrarHistorico("historico_ruim.txt", "resultado: empate")
                     acabou = True
                 else:
                     r3 = random()
@@ -293,6 +307,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                         else:
                             jogadaIA = choice(disp)
                     b[jogadaIA] = iaSymbol
+                    registrarHistorico("historico_ruim.txt", "ia " + iaSymbol + " jogou na posicao " + str(jogadaIA))
                     w2 = False
                     if b[0]==iaSymbol and b[1]==iaSymbol and b[2]==iaSymbol: w2=True
                     if b[3]==iaSymbol and b[4]==iaSymbol and b[5]==iaSymbol: w2=True
@@ -305,6 +320,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                     if w2 == True:
                         print("a IA ganhou")
                         placar["derrotas"] = placar["derrotas"] + 1
+                        registrarHistorico("historico_ruim.txt", "resultado: vitoria da ia")
                         acabou = True
                     else:
                         turn = humanSymbol
