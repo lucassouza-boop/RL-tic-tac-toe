@@ -315,6 +315,54 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         print(" " + b[6] + " | " + b[7] + " | " + b[8])
         salvarPlacar("placar_ruim.txt")
         print("placar geral -> vitorias: " + str(placar["vitorias"]) + " derrotas: " + str(placar["derrotas"]) + " empates: " + str(placar["empates"]))
+    elif modo == "iavsia":
+        import time
+        carregarQTable(caminhoSalvar)
+        b = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        turn = 'X'
+        acabou = False
+        while acabou == False:
+            os.system("cls" if os.name == "nt" else "clear")
+            print(" " + b[0] + " | " + b[1] + " | " + b[2])
+            print("---+---+---")
+            print(" " + b[3] + " | " + b[4] + " | " + b[5])
+            print("---+---+---")
+            print(" " + b[6] + " | " + b[7] + " | " + b[8])
+            disp = []
+            for i in range(9):
+                if b[i] == ' ':
+                    disp.append(i)
+            if len(disp) == 0:
+                print("empate")
+                acabou = True
+            else:
+                chave = tabuleiroParaChave(b)
+                if chave in q_table:
+                    melhores = q_table[chave]
+                    melhorValor = -999999
+                    melhorJogada = disp[0]
+                    for a in disp:
+                        v = melhores[a] if a in melhores else 0
+                        if v > melhorValor:
+                            melhorValor = v
+                            melhorJogada = a
+                    jogadaAtual = melhorJogada
+                else:
+                    jogadaAtual = choice(disp)
+                b[jogadaAtual] = turn
+                venceu = False
+                for combo in [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]:
+                    if b[combo[0]] == turn and b[combo[1]] == turn and b[combo[2]] == turn:
+                        venceu = True
+                if venceu == True:
+                    print(turn + " venceu")
+                    acabou = True
+                else:
+                    if turn == 'X':
+                        turn = 'O'
+                    else:
+                        turn = 'X'
+            time.sleep(1)
     else:
         raise Exception("erro")
 
@@ -339,13 +387,18 @@ if __name__ == "__main__":
         rodarJogoETreinarTudoDeUmaVez("treinar", int(args.episodios), caminhoArquivo)
     elif args.modo == "jogar":
         rodarJogoETreinarTudoDeUmaVez("jogar", 0, caminhoArquivo)
+    elif args.modo == "iavsia":
+        rodarJogoETreinarTudoDeUmaVez("iavsia", 0, caminhoArquivo)
     else:
         print("1 - treinar")
         print("2 - jogar")
+        print("3 - assistir ia vs ia")
         op = input("escolha: ")
         if op == "1":
             rodarJogoETreinarTudoDeUmaVez("treinar", int(args.episodios), caminhoArquivo)
         elif op == "2":
             rodarJogoETreinarTudoDeUmaVez("jogar", 0, caminhoArquivo)
+        elif op == "3":
+            rodarJogoETreinarTudoDeUmaVez("iavsia", 0, caminhoArquivo)
         else:
             raise Exception("erro")
