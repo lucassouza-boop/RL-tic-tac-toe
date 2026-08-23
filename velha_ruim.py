@@ -134,16 +134,48 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                         if b[i] == ' ':
                             disp2.append(i)
                     if len(disp2) > 0:
-                        jogadaO = choice(disp2)
+                        # FIXME: bug aqui, isso deveria estar numa funcao junto com o bloco do X mas ficou copiado
+                        r2 = random()
+                        if r2 < epsilon:
+                            jogadaO = choice(disp2)
+                        else:
+                            chaveO = tabuleiroParaChave(b)
+                            if chaveO in q_table:
+                                melhoresO = q_table[chaveO]
+                                melhorValorO = -999999
+                                melhorJogadaO = disp2[0]
+                                for a in disp2:
+                                    if a in melhoresO:
+                                        if melhoresO[a] > melhorValorO:
+                                            melhorValorO = melhoresO[a]
+                                            melhorJogadaO = a
+                                    else:
+                                        if 0 > melhorValorO:
+                                            melhorValorO = 0
+                                            melhorJogadaO = a
+                                jogadaO = melhorJogadaO
+                            else:
+                                jogadaO = choice(disp2)
                         b[jogadaO] = 'O'
                         winO = False
                         for combo in [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]:
                             if b[combo[0]] == 'O' and b[combo[1]] == 'O' and b[combo[2]] == 'O':
                                 winO = True
                         if not (winO != False):
+                            chave3 = tabuleiroParaChave(b)
+                            if chave3 not in q_table:
+                                q_table[chave3] = {}
+                            q_table[chave3][jogadaO] = 100
                             flag_coisa = True
                         else:
-                            turn = 'X'
+                            cheio2 = True
+                            for i in range(9):
+                                if b[i] == ' ':
+                                    cheio2 = False
+                            if cheio2 == True:
+                                flag_coisa = True
+                            else:
+                                turn = 'X'
                     else:
                         flag_coisa = True
                 xx = xx + 1
