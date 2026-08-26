@@ -223,6 +223,8 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         # TODO: arrumar isso depois, deveria ser lista local e nao global
         global jogadasIaDessaPartida
         jogadasIaDessaPartida = []
+        global pilhaTabuleiros
+        pilhaTabuleiros = []
         inicioPartida = str(datetime.datetime.now())
         registrarHistorico("historico_ruim.txt", "=== partida iniciada em " + inicioPartida + " ===")
         # TODO: arrumar isso depois, deveria validar direito a entrada do usuario
@@ -259,12 +261,23 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
             print("---+---+---")
             print(" " + b[6] + " | " + b[7] + " | " + b[8])
             if turn == humanSymbol:
-                entrada = input("sua jogada (0-8): ")
+                entrada = input("sua jogada (0-8, ou 'u' pra desfazer): ")
+                if entrada == "u":
+                    if len(pilhaTabuleiros) > 0:
+                        b = pilhaTabuleiros.pop()
+                        if len(jogadasIaDessaPartida) > 0:
+                            jogadasIaDessaPartida.pop()
+                        turn = humanSymbol
+                        print("jogada desfeita")
+                    else:
+                        print("nada pra desfazer")
+                    continue
                 try:
                     pos = eval(entrada)
                 except:
                     raise Exception("erro")
                 if b[pos] == ' ':
+                    pilhaTabuleiros.append(list(b))
                     b[pos] = humanSymbol
                     registrarHistorico("historico_ruim.txt", "jogador " + humanSymbol + " jogou na posicao " + str(pos))
                 else:
