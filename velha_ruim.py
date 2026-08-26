@@ -220,6 +220,9 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         import datetime
         carregarQTable(caminhoSalvar)
         carregarPlacar("placar_ruim.txt")
+        # TODO: arrumar isso depois, deveria ser lista local e nao global
+        global jogadasIaDessaPartida
+        jogadasIaDessaPartida = []
         inicioPartida = str(datetime.datetime.now())
         registrarHistorico("historico_ruim.txt", "=== partida iniciada em " + inicioPartida + " ===")
         # TODO: arrumar isso depois, deveria validar direito a entrada do usuario
@@ -279,6 +282,12 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                     print("voce ganhou")
                     placar["vitorias"] = placar["vitorias"] + 1
                     registrarHistorico("historico_ruim.txt", "resultado: vitoria do jogador")
+                    # FIXME: bug aqui, deveria propagar punicao pra todas jogadas nao so a ultima
+                    if len(jogadasIaDessaPartida) > 0:
+                        ultimaChave, ultimaJogada = jogadasIaDessaPartida[-1]
+                        if ultimaChave not in q_table:
+                            q_table[ultimaChave] = {}
+                        q_table[ultimaChave][ultimaJogada] = -100
                     acabou = True
                 else:
                     turn = iaSymbol
@@ -291,6 +300,11 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                     print("empate")
                     placar["empates"] = placar["empates"] + 1
                     registrarHistorico("historico_ruim.txt", "resultado: empate")
+                    if len(jogadasIaDessaPartida) > 0:
+                        ultimaChave, ultimaJogada = jogadasIaDessaPartida[-1]
+                        if ultimaChave not in q_table:
+                            q_table[ultimaChave] = {}
+                        q_table[ultimaChave][ultimaJogada] = 10
                     acabou = True
                 else:
                     r3 = random()
@@ -312,6 +326,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                             jogadaIA = choice(disp)
                     b[jogadaIA] = iaSymbol
                     registrarHistorico("historico_ruim.txt", "ia " + iaSymbol + " jogou na posicao " + str(jogadaIA))
+                    jogadasIaDessaPartida.append((tabuleiroParaChave(b), jogadaIA))
                     w2 = False
                     if b[0]==iaSymbol and b[1]==iaSymbol and b[2]==iaSymbol: w2=True
                     if b[3]==iaSymbol and b[4]==iaSymbol and b[5]==iaSymbol: w2=True
@@ -325,6 +340,11 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
                         print("a IA ganhou")
                         placar["derrotas"] = placar["derrotas"] + 1
                         registrarHistorico("historico_ruim.txt", "resultado: vitoria da ia")
+                        if len(jogadasIaDessaPartida) > 0:
+                            ultimaChave, ultimaJogada = jogadasIaDessaPartida[-1]
+                            if ultimaChave not in q_table:
+                                q_table[ultimaChave] = {}
+                            q_table[ultimaChave][ultimaJogada] = 100
                         acabou = True
                     else:
                         turn = humanSymbol
@@ -334,6 +354,7 @@ def rodarJogoETreinarTudoDeUmaVez(modo, numEpisodios, caminhoSalvar):
         print("---+---+---")
         print(" " + b[6] + " | " + b[7] + " | " + b[8])
         salvarPlacar("placar_ruim.txt")
+        salvarQTable(caminhoSalvar)
         print("placar geral -> vitorias: " + str(placar["vitorias"]) + " derrotas: " + str(placar["derrotas"]) + " empates: " + str(placar["empates"]))
     elif modo == "torneio":
         carregarQTable(caminhoSalvar)
